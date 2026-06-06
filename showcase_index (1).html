@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Trig Sudoku — เกมปริศนาซูโดกุที่ผสมผสานความรู้ด้านตรีโกณมิติ เพื่อส่งเสริมการเรียนรู้คณิตศาสตร์อย่างสนุกสนาน">
+<meta name="keywords" content="trig sudoku, ตรีโกณมิติ, คณิตศาสตร์, เกมการศึกษา, sudoku">
+<meta name="author" content="วรดา ภู่น้อย">
+<meta property="og:title" content="TRIG SUDOKU — โครงงานคณิตศาสตร์">
+<meta property="og:description" content="เกมซูโดกุตรีโกณมิติ เรียนรู้อย่างสนุกสนาน">
+<meta property="og:type" content="website">
+<title>TRIG SUDOKU — Project Showcase</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════
+   CSS VARIABLES & RESET
+══════════════════════════════════════════════════ */
+:root {
+  --bg:       #0d1424;
+  --bg2:      #111929;
+  --panel:    #1a2540;
+  --panel2:   #1e2d4e;
+  --accent:   #64c8ff;
+  --accent2:  #3aa8e0;
+  --gold:     #ffd250;
+  --gold2:    #e6b832;
+  --green:    #6ee7b7;
+  --red:      #f87171;
+  --text:     #dce8ff;
+  --text2:    #a0b4d8;
+  --dim:      #6b7fa8;
+  --border:   rgba(100,200,255,.12);
+  --glow:     rgba(100,200,255,.15);
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'Noto Sans Thai', sans-serif;
+  --font-display: 'DM Serif Display', serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--panel2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent2); }
+
+/* ══════════════════════════════════════════════════
+   BACKGROUND GRID TEXTURE
+══════════════════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 clamp(16px, 4vw, 60px);
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(13,20,36,.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: background .3s;
+}
+
+.nav-logo {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-logo span { color: var(--text); }
+
+.nav-links {
+  display: flex; align-items: center; gap: 6px;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: color .2s, background .2s;
+  font-family: var(--font-mono);
+}
+.nav-links a:hover { color: var(--accent); background: var(--glow); }
+
+.nav-cta {
+  background: transparent !important;
+  border: 1px solid var(--accent);
+  color: var(--accent) !important;
+  padding: 6px 16px !important;
+}
+.nav-cta:hover { background: var(--glow) !important; }
+
+/* Mobile hamburger */
+.nav-hamburger {
+  display: none;
+  flex-direction: column; gap: 5px;
+  cursor: pointer; padding: 4px;
+  background: none; border: none;
+}
+.nav-hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--text2);
+  border-radius: 2px;
+  transition: all .3s;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.nav-mobile-menu {
+  display: none;
+  position: fixed;
+  top: 64px; left: 0; right: 0;
+  background: rgba(13,20,36,.97);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 20px;
+  flex-direction: column; gap: 4px;
+  z-index: 99;
+}
+.nav-mobile-menu.open { display: flex; }
+.nav-mobile-menu a {
+  color: var(--text2); text-decoration: none;
+  font-family: var(--font-mono); font-size: 14px;
+  padding: 12px 16px; border-radius: 8px;
+  transition: all .2s;
+}
+.nav-mobile-menu a:hover { color: var(--accent); background: var(--glow); }
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+}
+
+/* ══════════════════════════════════════════════════
+   HERO SECTION
+══════════════════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: clamp(80px, 12vh, 120px) clamp(16px, 6vw, 80px) 60px;
+  position: relative; overflow: hidden;
+}
+
+/* Orb background glows */
+.hero-orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); pointer-events: none;
+}
+.hero-orb-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(100,200,255,.08) 0%, transparent 70%);
+  top: -100px; right: -100px;
+}
+.hero-orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255,210,80,.06) 0%, transparent 70%);
+  bottom: -50px; left: -80px;
+}
+
+.hero-inner {
+  max-width: 900px; width: 100%;
+  text-align: center;
+  position: relative; z-index: 1;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 3px; color: var(--accent);
+  background: rgba(100,200,255,.08);
+  border: 1px solid rgba(100,200,255,.2);
+  padding: 6px 16px; border-radius: 100px;
+  margin-bottom: 28px;
+}
+.hero-eyebrow::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+
+.hero-title {
+  font-family: var(--font-mono);
+  font-size: clamp(48px, 10vw, 96px);
+  font-weight: 700;
+  line-height: .95;
+  letter-spacing: -2px;
+  margin-bottom: 12px;
+}
+.hero-title .t1 {
+  display: block; color: var(--accent);
+  text-shadow: 0 0 60px rgba(100,200,255,.4);
+}
+.hero-title .t2 {
+  display: block; color: var(--text);
+}
+
+.hero-sub {
+  font-size: clamp(15px, 2.2vw, 19px);
+  color: var(--text2);
+  max-width: 580px; margin: 0 auto 40px;
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+.hero-btns {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-weight: 700;
+  font-size: 13px; letter-spacing: 1px;
+  padding: 14px 28px; border-radius: 12px;
+  border: none; cursor: pointer;
+  text-decoration: none;
+  transition: all .25s;
+  position: relative; overflow: hidden;
+}
+.btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,.06);
+  opacity: 0; transition: opacity .2s;
+}
+.btn:hover::after { opacity: 1; }
+
+.btn-primary {
+  background: linear-gradient(135deg, #1e3a6e, #2a5298);
+  color: var(--accent);
+  border: 1px solid rgba(100,200,255,.4);
+  box-shadow: 0 4px 24px rgba(100,200,255,.15), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(100,200,255,.25); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { color: var(--text); border-color: rgba(100,200,255,.3); transform: translateY(-2px); }
+
+/* Trig formula decoration */
+.hero-deco {
+  margin-top: 60px;
+  display: flex; justify-content: center; gap: clamp(20px, 4vw, 48px);
+  flex-wrap: wrap;
+}
+.hero-deco-item {
+  font-family: var(--font-mono); font-size: clamp(11px, 1.5vw, 13px);
+  color: var(--dim); opacity: .6;
+  letter-spacing: 1px;
+}
+
+/* ══════════════════════════════════════════════════
+   SECTION SHARED STYLES
+══════════════════════════════════════════════════ */
+section {
+  padding: clamp(60px, 10vh, 100px) clamp(16px, 6vw, 80px);
+  position: relative; z-index: 1;
+}
+
+.section-label {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 4px; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 42px);
+  color: var(--text); line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.section-sub {
+  font-size: clamp(14px, 1.6vw, 16px);
+  color: var(--text2); max-width: 560px;
+  line-height: 1.8; font-weight: 300;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border) 30%, var(--border) 70%, transparent);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════
+   ABOUT SECTION
+══════════════════════════════════════════════════ */
+#about {
+  max-width: 1200px; margin: 0 auto;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+  margin-top: 48px;
+}
+
+@media (max-width: 768px) {
+  .about-grid { grid-template-columns: 1fr; }
+}
+
+.about-text p {
+  color: var(--text2); font-size: 15px;
+  line-height: 1.9; margin-bottom: 16px;
+  font-weight: 300;
+}
+.about-text p strong { color: var(--accent); font-weight: 600; }
+
+.about-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 20px;
+  text-align: center;
+  transition: border-color .3s, transform .3s;
+}
+.stat-card:hover { border-color: rgba(100,200,255,.3); transform: translateY(-4px); }
+
+.stat-number {
+  font-family: var(--font-mono); font-size: clamp(28px, 4vw, 36px);
+  font-weight: 700; color: var(--gold);
+  display: block; line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 12px; color: var(--dim);
+  letter-spacing: 1px;
+}
+
+/* ══════════════════════════════════════════════════
+   FEATURES SECTION
+══════════════════════════════════════════════════ */
+#features {
+  background: var(--bg2);
+}
+.features-inner {
+  max-width: 1200px; margin: 0 auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-top: 48px;
+}
+
+.feature-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: clamp(24px, 3vw, 36px);
+  transition: all .3s;
+  position: relative; overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.feature-card:hover { border-color: rgba(100,200,255,.25); transform: translateY(-6px); box-shadow: 0 20px 48px rgba(0,0,0,.3); }
+.feature-card:hover::before { opacity: 1; }
+
+.feature-icon {
+  font-size: 32px; margin-bottom: 16px;
+  display: block;
+}
+.feature-title {
+  font-family: var(--font-mono); font-size: 13px;
+  letter-spacing: 1px; color: var(--accent);
+  margin-bottom: 8px;
+}
+.feature-desc {
+  font-size: 14px; color: var(--text2);
+  line-height: 1.7; font-weight: 300;
+}
+
+/* ══════════════════════════════════════════════════
+   HOW TO PLAY
+══════════════════════════════════════════════════ */
+#howtoplay {
+  max-width: 1200px; margin: 0 auto;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 48px;
+}
+
+.step-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  position: relative;
+  transition: all .3s;
+}
+.step-card:hover { border-color: rgba(255,210,80,.25); transform: translateY(-4px); }
+
+.step-num {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 2px; color: var(--gold);
+  margin-bottom: 12px; display: block;
+}
+.step-title {
+  font-size: 15px; font-weight: 600;
+  color: var(--text); margin-bottom: 8px;
+}
+.step-desc {
+  font-size: 13px; color: var(--text2);
+  line-height: 1.7; font-weight: 300;
+}
+
+.step-connector {
+  display: none;
+}
+@media (min-width: 768px) {
+  .steps-grid { position: relative; }
+}
+
+/* ══════════════════════════════════════════════════
+   DIFFICULTY SECTION
+══════════════════════════════════════════════════ */
+#difficulty {
+  background: var(--bg2);
+}
+.diff-inner {
+  max-width: 1200px; margin: 0 auto;
+}
+
+.diff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 48px;
+}
+
+.diff-card {
+  border-radius: 20px;
+  padding: clamp(28px, 3vw, 40px);
+  position: relative; overflow: hidden;
+  transition: transform .3s, box-shadow .3s;
+}
+.diff-card:hover { transform: translateY(-6px); }
+
+.diff-card-easy {
+  background: linear-gradient(135deg, #0d2b1a, #0f3321);
+  border: 1px solid rgba(110,231,183,.2);
+}
+.diff-card-easy:hover { box-shadow: 0 20px 48px rgba(110,231,183,.1); border-color: rgba(110,231,183,.4); }
+
+.diff-card-medium {
+  background: linear-gradient(135deg, #2b2200, #332900);
+  border: 1px solid rgba(255,210,80,.2);
+}
+.diff-card-medium:hover { box-shadow: 0 20px 48px rgba(255,210,80,.1); border-color: rgba(255,210,80,.4); }
+
+.diff-card-hard {
+  background: linear-gradient(135deg, #2b0d0d, #330f0f);
+  border: 1px solid rgba(248,113,113,.2);
+}
+.diff-card-hard:hover { box-shadow: 0 20px 48px rgba(248,113,113,.1); border-color: rgba(248,113,113,.4); }
+
+.diff-badge-tag {
+  display: inline-block;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 3px; font-weight: 700;
+  padding: 4px 12px; border-radius: 100px;
+  margin-bottom: 20px;
+}
+.diff-card-easy .diff-badge-tag { background: rgba(110,231,183,.12); color: #6ee7b7; }
+.diff-card-medium .diff-badge-tag { background: rgba(255,210,80,.12); color: #ffd250; }
+.diff-card-hard .diff-badge-tag { background: rgba(248,113,113,.12); color: #f87171; }
+
+.diff-title {
+  font-family: var(--font-mono); font-size: clamp(22px, 3vw, 28px);
+  font-weight: 700; margin-bottom: 16px;
+}
+.diff-card-easy .diff-title { color: #6ee7b7; }
+.diff-card-medium .diff-title { color: #ffd250; }
+.diff-card-hard .diff-title { color: #f87171; }
+
+.diff-specs {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.diff-specs li {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: rgba(220,232,255,.7);
+  font-weight: 300;
+}
+.diff-specs li::before {
+  content: '';
+  display: inline-block; width: 4px; height: 4px;
+  border-radius: 50%; flex-shrink: 0;
+}
+.diff-card-easy .diff-specs li::before { background: #6ee7b7; }
+.diff-card-medium .diff-specs li::before { background: #ffd250; }
+.diff-card-hard .diff-specs li::before { background: #f87171; }
+
+/* ══════════════════════════════════════════════════
+   SCREENSHOTS SECTION
+══════════════════════════════════════════════════ */
+#screenshots {
+  max-width: 1200px; margin: 0 auto;
+}
+
+.screenshots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 48px;
+}
+
+@media (max-width: 768px) {
+  .screenshots-grid { grid-template-columns: 1fr; }
+}
+
+.screenshot-frame {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  aspect-ratio: 16/10;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  transition: all .3s;
+}
+.screenshot-frame:hover { border-color: rgba(100,200,255,.3); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,.4); }
+
+/* Placeholder Grid SVG */
+.screenshot-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px;
+  color: var(--dim);
+}
+.placeholder-grid {
+  display: grid; gap: 3px;
+}
+.placeholder-grid-6 { grid-template-columns: repeat(6,1fr); }
+.placeholder-grid-9 { grid-template-columns: repeat(9,1fr); }
+
+.placeholder-cell {
+  width: clamp(12px, 3vw, 20px);
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+}
+.placeholder-cell.filled { background: rgba(100,200,255,.15); border-color: rgba(100,200,255,.3); }
+.placeholder-cell.gold { background: rgba(255,210,80,.15); border-color: rgba(255,210,80,.3); }
+
+.screenshot-label {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 2px; color: var(--dim);
+}
+
+/* ══════════════════════════════════════════════════
+   DOWNLOAD SECTION
+══════════════════════════════════════════════════ */
+#download {
+  background: var(--bg2);
+}
+.download-inner {
+  max-width: 900px; margin: 0 auto; text-align: center;
+}
+
+.download-btns {
+  display: flex; flex-wrap: wrap; gap: 16px;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.download-btn {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px;
+  padding: 20px 32px; border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text2);
+  text-decoration: none;
+  transition: all .3s; min-width: 140px;
+  cursor: pointer;
+}
+.download-btn:hover { border-color: rgba(100,200,255,.3); color: var(--text); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.3); }
+.download-btn.primary-dl {
+  background: linear-gradient(135deg, #1e3a6e, #2a5298);
+  border-color: rgba(100,200,255,.4);
+  color: var(--accent);
+}
+.download-btn.primary-dl:hover { box-shadow: 0 12px 32px rgba(100,200,255,.2); }
+
+.dl-icon { font-size: 28px; }
+.dl-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; }
+.dl-sub { font-size: 11px; color: var(--dim); }
+
+/* QR Code area */
+.qr-area {
+  margin-top: 48px;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+
+.qr-frame {
+  width: 160px; height: 160px;
+  background: white;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px;
+  box-shadow: 0 0 40px rgba(100,200,255,.1);
+  position: relative;
+}
+
+/* QR pattern placeholder */
+.qr-inner {
+  width: 100%; height: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.qr-pixel { border-radius: 1px; background: #0d1424; }
+.qr-pixel.w { background: white; }
+
+.qr-label {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 2px; color: var(--dim);
+}
+.qr-url {
+  font-size: 13px; color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+/* ══════════════════════════════════════════════════
+   TEAM SECTION
+══════════════════════════════════════════════════ */
+#team {
+  max-width: 1200px; margin: 0 auto;
+  text-align: center;
+}
+
+.team-cards {
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 24px; margin-top: 48px;
+}
+
+.team-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 40px 48px;
+  text-align: center;
+  transition: all .3s;
+  max-width: 340px; width: 100%;
+}
+.team-card:hover { border-color: rgba(100,200,255,.3); transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,.4); }
+
+.team-avatar {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--panel2), #2a3a60);
+  border: 2px solid rgba(100,200,255,.2);
+  margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  position: relative;
+}
+.team-avatar::after {
+  content: '';
+  position: absolute; inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(100,200,255,.1);
+}
+
+.team-name {
+  font-family: var(--font-mono); font-size: 17px;
+  font-weight: 700; color: var(--text);
+  letter-spacing: 1px; margin-bottom: 6px;
+}
+.team-role {
+  font-size: 13px; color: var(--accent);
+  letter-spacing: 2px; margin-bottom: 16px;
+}
+.team-desc {
+  font-size: 13px; color: var(--text2);
+  line-height: 1.7; font-weight: 300;
+}
+.team-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  justify-content: center; margin-top: 16px;
+}
+.team-tag {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 1px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  color: var(--dim);
+  padding: 3px 10px; border-radius: 100px;
+}
+
+/* ══════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════ */
+footer {
+  background: #080e1a;
+  border-top: 1px solid var(--border);
+  padding: 40px clamp(16px, 6vw, 80px);
+  position: relative; z-index: 1;
+}
+
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 20px;
+}
+
+.footer-left { display: flex; flex-direction: column; gap: 4px; }
+.footer-logo {
+  font-family: var(--font-mono); font-size: 14px;
+  font-weight: 700; color: var(--accent); letter-spacing: 2px;
+}
+.footer-copy {
+  font-size: 12px; color: var(--dim);
+}
+
+.footer-links {
+  display: flex; gap: 20px; flex-wrap: wrap;
+}
+.footer-links a {
+  font-size: 12px; color: var(--dim);
+  text-decoration: none; font-family: var(--font-mono);
+  letter-spacing: 1px;
+  transition: color .2s;
+}
+.footer-links a:hover { color: var(--accent); }
+
+.back-top {
+  width: 40px; height: 40px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; cursor: pointer;
+  text-decoration: none; color: var(--text2);
+  transition: all .2s;
+}
+.back-top:hover { border-color: rgba(100,200,255,.3); color: var(--accent); transform: translateY(-3px); }
+
+/* ══════════════════════════════════════════════════
+   SCROLL ANIMATIONS
+══════════════════════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+
+/* ══════════════════════════════════════════════════
+   DEVICE INDICATOR
+══════════════════════════════════════════════════ */
+#device-indicator {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  z-index: 200;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  background: rgba(13,20,36,.8);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 100px;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ── DEVICE INDICATOR ── -->
+<div id="device-indicator">⟳ detecting...</div>
+
+<!-- ══════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════ -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">TRIG<span>SUDOKU</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">เกี่ยวกับ</a></li>
+    <li><a href="#features">คุณสมบัติ</a></li>
+    <li><a href="#howtoplay">วิธีเล่น</a></li>
+    <li><a href="#difficulty">ระดับ</a></li>
+    <li><a href="#download">ดาวน์โหลด</a></li>
+    <li><a href="#team">ผู้จัดทำ</a></li>
+    <li><a href="https://worada33.github.io/trigodoku/" target="_blank" class="nav-cta">▶ เล่นเลย</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile nav menu -->
+<div class="nav-mobile-menu" id="mobile-menu">
+  <a href="#about" onclick="closeMenu()">เกี่ยวกับโครงงาน</a>
+  <a href="#features" onclick="closeMenu()">คุณสมบัติ</a>
+  <a href="#howtoplay" onclick="closeMenu()">วิธีเล่น</a>
+  <a href="#difficulty" onclick="closeMenu()">ระดับความยาก</a>
+  <a href="#screenshots" onclick="closeMenu()">ภาพหน้าจอ</a>
+  <a href="#download" onclick="closeMenu()">ดาวน์โหลด</a>
+  <a href="#team" onclick="closeMenu()">ผู้จัดทำ</a>
+  <a href="https://worada33.github.io/trigodoku/" target="_blank" style="color:var(--accent)" onclick="closeMenu()">▶ เล่นเลย</a>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">โครงงานคณิตศาสตร์และเทคโนโลยี</div>
+    <h1 class="hero-title">
+      <span class="t1">TRIG</span>
+      <span class="t2">SUDOKU</span>
+    </h1>
+    <p class="hero-sub">
+      เกมปริศนาซูโดกุที่ผสมผสานความรู้ด้านตรีโกณมิติ<br>
+      เพื่อส่งเสริมการเรียนรู้คณิตศาสตร์อย่างสนุกสนาน
+    </p>
+    <div class="hero-btns">
+      <a href="https://worada33.github.io/trigodoku/" target="_blank" class="btn btn-primary">
+        🎮 เล่นเกม
+      </a>
+      <a href="#download" class="btn btn-secondary">
+        📱 ดาวน์โหลดแอป
+      </a>
+    </div>
+    <div class="hero-deco">
+      <span class="hero-deco-item">sin(π/6) = ½</span>
+      <span class="hero-deco-item">cos(π/4) = √2/2</span>
+      <span class="hero-deco-item">tan(π/3) = √3</span>
+      <span class="hero-deco-item">sin(90°) = 1</span>
+      <span class="hero-deco-item">cos(0°) = 1</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════
+     ABOUT
+══════════════════════════════════════════════ -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <div class="section-label">ABOUT PROJECT</div>
+      <h2 class="section-title">เกี่ยวกับโครงงาน</h2>
+      <p>
+        <strong>Trig Sudoku</strong> คือเกมปริศนาที่ประยุกต์แนวคิดของ Sudoku คลาสสิก
+        เข้ากับความรู้ด้านตรีโกณมิติ ผู้เล่นต้องเติมค่าฟังก์ชันตรีโกณมิติ
+        ลงในตารางให้ถูกต้องตามกฎ
+      </p>
+      <p>
+        แต่ละช่องในตารางแสดงนิพจน์ตรีโกณมิติ เช่น sin 30°, cos π/4
+        ผู้เล่นต้องจับคู่กับค่าตัวเลขที่ถูกต้อง
+        ช่วยส่งเสริมการคิดวิเคราะห์และการจดจำค่ามุมสำคัญอย่างเป็นธรรมชาติ
+      </p>
+      <p>
+        โครงงานนี้พัฒนาด้วย HTML, CSS และ JavaScript ล้วนๆ
+        รองรับทุกอุปกรณ์ พร้อม layout ที่ปรับตามขนาดหน้าจออัตโนมัติ
+      </p>
+    </div>
+    <div class="about-stats reveal reveal-delay-2">
+      <div class="stat-card">
+        <span class="stat-number">3</span>
+        <span class="stat-label">ระดับความยาก</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">9×9</span>
+        <span class="stat-label">ตารางสูงสุด</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">4</span>
+        <span class="stat-label">ชีวิตต่อเกม</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">100%</span>
+        <span class="stat-label">ไม่ต้องติดตั้ง</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════
+     FEATURES
+══════════════════════════════════════════════ -->
+<section id="features">
+  <div class="features-inner">
+    <div style="text-align:center" class="reveal">
+      <div class="section-label">FEATURES</div>
+      <h2 class="section-title">คุณสมบัติเด่น</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <span class="feature-icon">🎯</span>
+        <div class="feature-title">ฝึกทักษะตรีโกณมิติ</div>
+        <p class="feature-desc">จดจำค่ามุมสำคัญในเชิงองศาและเรเดียน ผ่านการเล่นที่สนุกและท้าทาย ไม่น่าเบื่อ</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <span class="feature-icon">🧩</span>
+        <div class="feature-title">เรียนรู้ผ่านเกม</div>
+        <p class="feature-desc">ใช้หลักการ Gamification ผสมกับ Problem Solving ทำให้การเรียนคณิตศาสตร์น่าสนใจขึ้น</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <span class="feature-icon">📱</span>
+        <div class="feature-title">เล่นได้ทุกอุปกรณ์</div>
+        <p class="feature-desc">Layout ปรับอัตโนมัติสำหรับมือถือ แท็บเล็ต และคอมพิวเตอร์ ด้วยระบบ Device Detection</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-4">
+        <span class="feature-icon">🏆</span>
+        <div class="feature-title">หลายระดับความยาก</div>
+        <p class="feature-desc">ตั้งแต่ Easy 6×6 สำหรับผู้เริ่มต้น ไปจนถึง Hard 9×9 แบบผสมสำหรับผู้เชี่ยวชาญ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════
+     HOW TO PLAY
+══════════════════════════════════════════════ -->
+<section id="howtoplay">
+  <div style="text-align:center" class="reveal">
+    <div class="section-label">HOW TO PLAY</div>
+    <h2 class="section-title">วิธีการเล่น</h2>
+    <p class="section-sub" style="margin:0 auto">เรียนรู้วิธีเล่นใน 4 ขั้นตอนง่ายๆ</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card reveal reveal-delay-1">
+      <span class="step-num">STEP 01</span>
+      <div class="step-title">เลือกช่องว่างในตาราง</div>
+      <p class="step-desc">แตะหรือคลิกช่องที่ต้องการกรอกคำตอบ ช่องจะเปลี่ยนสีแสดงว่าถูกเลือก</p>
+    </div>
+    <div class="step-card reveal reveal-delay-2">
+      <span class="step-num">STEP 02</span>
+      <div class="step-title">เลือกคำตอบจากตัวเลือก</div>
+      <p class="step-desc">กดปุ่มคำตอบด้านข้าง (คอม/แท็บเล็ต) หรือด้านล่าง (มือถือ) เพื่อเลือกค่าที่ต้องการ</p>
+    </div>
+    <div class="step-card reveal reveal-delay-3">
+      <span class="step-num">STEP 03</span>
+      <div class="step-title">เติมค่าให้ครบทุกช่อง</div>
+      <p class="step-desc">แต่ละแถวและคอลัมน์ต้องมีค่าไม่ซ้ำกัน คล้ายกฎ Sudoku ทั่วไป</p>
+    </div>
+    <div class="step-card reveal reveal-delay-4">
+      <span class="step-num">STEP 04</span>
+      <div class="step-title">ระวังหัวใจที่เหลืออยู่</div>
+      <p class="step-desc">มี 4 ชีวิต ถ้าตอบผิดจะเสียหัวใจ 1 ดวง หัวใจหมดแสดงว่า Game Over</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════
+     DIFFICULTY
+══════════════════════════════════════════════ -->
+<section id="difficulty">
+  <div class="diff-inner">
+    <div style="text-align:center" class="reveal">
+      <div class="section-label">DIFFICULTY LEVELS</div>
+      <h2 class="section-title">ระดับความยาก</h2>
+    </div>
+    <div class="diff-grid">
+      <div class="diff-card diff-card-easy reveal reveal-delay-1">
+        <div class="diff-badge-tag">EASY</div>
+        <div class="diff-title">Easy</div>
+        <ul class="diff-specs">
+          <li>ตาราง 6×6</li>
+          <li>ค่ามุมในหน่วยองศา (°)</li>
+          <li>เหมาะสำหรับผู้เริ่มต้น</li>
+          <li>ตัวช่วยในตารางเยอะ</li>
+        </ul>
+      </div>
+      <div class="diff-card diff-card-medium reveal reveal-delay-2">
+        <div class="diff-badge-tag">MEDIUM</div>
+        <div class="diff-title">Medium</div>
+        <ul class="diff-specs">
+          <li>ตาราง 9×9</li>
+          <li>ค่ามุมในหน่วยเรเดียน (π)</li>
+          <li>ท้าทายกว่าระดับ Easy</li>
+          <li>ต้องการความแม่นยำสูงขึ้น</li>
+        </ul>
+      </div>
+      <div class="diff-card diff-card-hard reveal reveal-delay-3">
+        <div class="diff-badge-tag">HARD</div>
+        <div class="diff-title">Hard</div>
+        <ul class="diff-specs">
+          <li>ตาราง 9×9</li>
+          <li>ผสมทั้งองศาและเรเดียน</li>
+          <li>ตัวช่วยในตารางน้อย</li>
+          <li>สำหรับผู้เชี่ยวชาญ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════
+     SCREENSHOTS
+══════════════════════════════════════════════ -->
+<section id="screenshots">
+  <div style="text-align:center" class="reveal">
+    <div class="section-label">SCREENSHOTS</div>
+    <h2 class="section-title">ภาพหน้าจอเกม</h2>
+    <p class="section-sub" style="margin:0 auto 0">ตัวอย่างหน้าจอการเล่นในแต่ละระดับ</p>
+  </div>
+  <div class="screenshots-grid">
+    <!-- Screenshot 1: Easy 6x6 -->
+    <div class="screenshot-frame reveal reveal-delay-1">
+      <div class="screenshot-placeholder">
+        <div class="placeholder-grid placeholder-grid-6" id="grid-preview-easy"></div>
+        <div class="screenshot-label">EASY — 6×6</div>
+      </div>
+    </div>
+    <!-- Screenshot 2: Medium 9x9 -->
+    <div class="screenshot-frame reveal reveal-delay-2">
+      <div class="screenshot-placeholder">
+        <div class="placeholder-grid placeholder-grid-9" id="grid-preview-medium"></div>
+        <div class="screenshot-label">MEDIUM — 9×9</div>
+      </div>
+    </div>
+    <!-- Screenshot 3: Hard 9x9 -->
+    <div class="screenshot-frame reveal reveal-delay-3">
+      <div class="screenshot-placeholder">
+        <div class="placeholder-grid placeholder-grid-9" id="grid-preview-hard"></div>
+        <div class="screenshot-label">HARD — 9×9</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════
+     DOWNLOAD
+══════════════════════════════════════════════ -->
+<section id="download">
+  <div class="download-inner">
+    <div class="reveal">
+      <div class="section-label" style="text-align:center">DOWNLOAD & PLAY</div>
+      <h2 class="section-title" style="text-align:center">ดาวน์โหลดและเล่นเกม</h2>
+      <p class="section-sub" style="text-align:center;margin:0 auto">
+        เล่นได้ทันทีบนเว็บ ไม่ต้องติดตั้ง หรือดาวน์โหลดสำหรับเล่นออฟไลน์
+      </p>
+    </div>
+    <div class="download-btns reveal reveal-delay-1">
+      <a href="https://worada33.github.io/trigodoku/" target="_blank" class="download-btn primary-dl">
+        <span class="dl-icon">🎮</span>
+        <span class="dl-label">เล่นบนเว็บ</span>
+        <span class="dl-sub">เปิดได้เลย</span>
+      </a>
+      <div class="download-btn">
+        <span class="dl-icon">📱</span>
+        <span class="dl-label">Android</span>
+        <span class="dl-sub">เร็วๆ นี้</span>
+      </div>
+      <div class="download-btn">
+        <span class="dl-icon">💻</span>
+        <span class="dl-label">Windows</span>
+        <span class="dl-sub">เร็วๆ นี้</span>
+      </div>
+    </div>
+
+    <!-- QR Code area -->
+    <div class="qr-area reveal reveal-delay-2">
+      <div class="qr-frame">
+        <canvas id="qr-canvas" width="136" height="136"></canvas>
+      </div>
+      <div class="qr-label">สแกนเพื่อเล่นเกม</div>
+      <div class="qr-url">worada33.github.io/trigodoku</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════
+     TEAM
+══════════════════════════════════════════════ -->
+<section id="team">
+  <div class="reveal">
+    <div class="section-label" style="text-align:center">TEAM</div>
+    <h2 class="section-title" style="text-align:center">ผู้จัดทำ</h2>
+  </div>
+  <div class="team-cards">
+    <div class="team-card reveal reveal-delay-1">
+      <div class="team-avatar">👩‍💻</div>
+      <div class="team-name">วรดา ภู่น้อย</div>
+      <div class="team-role">ผู้พัฒนาโครงงาน</div>
+      <p class="team-desc">ออกแบบและพัฒนาเกม Trig Sudoku ตั้งแต่แนวคิดจนถึงการนำไปใช้จริง เพื่อส่งเสริมการเรียนรู้คณิตศาสตร์</p>
+      <div class="team-tags">
+        <span class="team-tag">HTML/CSS</span>
+        <span class="team-tag">JavaScript</span>
+        <span class="team-tag">Game Design</span>
+        <span class="team-tag">คณิตศาสตร์</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-logo">TRIG SUDOKU</div>
+      <div class="footer-copy">© 2568 วรดา ภู่น้อย — โครงงานคณิตศาสตร์</div>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/worada33/trigodoku" target="_blank">GitHub</a>
+      <a href="https://worada33.github.io/trigodoku/" target="_blank">เล่นเกม</a>
+      <a href="#about">เกี่ยวกับ</a>
+    </div>
+    <a href="#hero" class="back-top" title="กลับด้านบน">↑</a>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+/* ════════════════════════════════════════
+   1. DEVICE DETECTION
+════════════════════════════════════════ */
+function detectDevice() {
+  const ua  = navigator.userAgent.toLowerCase();
+  const w   = window.innerWidth;
+  const h   = window.innerHeight;
+  const hasTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
+  const isTabletUA = /ipad|tablet|(android(?!.*mobile))|kindle|silk|playbook/i.test(ua);
+  const isMobileUA = /iphone|ipod|android.*mobile|mobile/i.test(ua);
+
+  let device;
+  if      (isTabletUA)                              device = 'tablet';
+  else if (isMobileUA)                              device = 'mobile';
+  else if (hasTouch && Math.min(w,h) >= 600)        device = 'tablet';
+  else if (hasTouch && w < 768)                     device = 'mobile';
+  else                                              device = 'desktop';
+
+  const icons  = { mobile:'📱', tablet:'📟', desktop:'🖥️' };
+  const labels = { mobile:'MOBILE', tablet:'TABLET', desktop:'DESKTOP' };
+
+  const el = document.getElementById('device-indicator');
+  if (el) el.textContent = `${icons[device]} ${labels[device]}`;
+
+  return device;
+}
+
+const DEVICE = detectDevice();
+window.addEventListener('resize', detectDevice);
+
+/* ════════════════════════════════════════
+   2. NAVBAR scroll effect
+════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  if (window.scrollY > 60) {
+    nav.style.background = 'rgba(13,20,36,.97)';
+  } else {
+    nav.style.background = 'rgba(13,20,36,.85)';
+  }
+});
+
+/* ════════════════════════════════════════
+   3. MOBILE MENU
+════════════════════════════════════════ */
+const hamburger  = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+
+function closeMenu() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}
+
+/* ════════════════════════════════════════
+   4. SCROLL REVEAL ANIMATION
+════════════════════════════════════════ */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ════════════════════════════════════════
+   5. GRID PLACEHOLDERS (visual preview)
+════════════════════════════════════════ */
+function buildGridPreview(containerId, size, filledRatio, color) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const total = size * size;
+  for (let i = 0; i < total; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'placeholder-cell';
+    const r = Math.random();
+    if (r < filledRatio * 0.4) cell.classList.add('gold');
+    else if (r < filledRatio)   cell.classList.add('filled');
+    el.appendChild(cell);
+  }
+}
+
+buildGridPreview('grid-preview-easy',   6, 0.65, 'green');
+buildGridPreview('grid-preview-medium', 9, 0.50, 'blue');
+buildGridPreview('grid-preview-hard',   9, 0.30, 'red');
+
+/* ════════════════════════════════════════
+   6. QR CODE — simple pixel pattern
+   (ใช้ Canvas วาด pattern QR เบื้องต้น
+   สำหรับ URL จริงควรใช้ library qrcode.js)
+════════════════════════════════════════ */
+(function drawQR() {
+  const canvas = document.getElementById('qr-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const size = 136;
+  const modules = 21; // QR version 1 = 21×21
+  const cellSize = size / modules;
+
+  // Pattern ตัวอย่าง (ไม่ใช่ QR จริง — เพื่อ visual เท่านั้น)
+  const pattern = [
+    [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,0,0],
+    [1,0,0,0,0,0,1,0,0,1,0,1,1,0,0,0,0,0,1,0,0],
+    [1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,0,0],
+    [1,0,1,1,1,0,1,0,0,1,0,1,1,0,1,1,1,0,1,0,0],
+    [1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,0,0],
+    [1,0,0,0,0,0,1,0,0,1,0,1,1,0,0,0,0,0,1,0,0],
+    [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,0,0],
+    [0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0],
+    [1,0,1,1,0,1,1,1,0,0,1,0,1,1,0,1,1,0,1,1,0],
+    [0,1,0,0,1,0,0,0,1,1,0,1,0,0,1,0,0,1,0,0,1],
+    [1,0,1,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,1,0,1],
+    [0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,0],
+    [1,0,1,0,1,0,1,0,0,0,1,0,1,1,1,1,1,1,1,0,0],
+    [0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,1,0,0],
+    [1,1,1,1,1,1,1,0,0,0,1,0,1,0,1,1,1,0,1,0,0],
+    [1,0,0,0,0,0,1,0,1,1,0,1,1,0,1,1,1,0,1,0,0],
+    [1,0,1,1,1,0,1,0,0,0,1,0,1,0,1,1,1,0,1,0,0],
+    [1,0,1,1,1,0,1,0,1,1,0,1,1,0,0,0,0,0,1,0,0],
+    [1,0,1,1,1,0,1,0,0,0,1,0,1,1,1,1,1,1,1,0,0],
+    [1,0,0,0,0,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0],
+    [1,1,1,1,1,1,1,0,0,0,1,0,1,0,1,0,1,0,1,0,0],
+  ];
+
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, size, size);
+
+  for (let r = 0; r < modules; r++) {
+    for (let c = 0; c < modules; c++) {
+      if (pattern[r] && pattern[r][c] === 1) {
+        ctx.fillStyle = '#0d1424';
+        ctx.fillRect(
+          Math.round(c * cellSize), Math.round(r * cellSize),
+          Math.round(cellSize), Math.round(cellSize)
+        );
+      }
+    }
+  }
+})();
+
+/* ════════════════════════════════════════
+   7. SMOOTH SCROLL for anchor links
+════════════════════════════════════════ */
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
